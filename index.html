@@ -32,9 +32,10 @@ main{padding:20px;}
 .meta{padding:8px;color:#e6f0f6;font-weight:700;text-align:center}
 .lb{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:40;}
 .lb.show{display:flex}
-.lb-inner{width:90%;max-width:1200px;height:90%;background:var(--panel);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.lb-inner{width:100%;height:100%;background:var(--panel);border-radius:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
 .lb-inner video, .lb-inner audio{width:100%;height:100%;object-fit:contain;}
 .lb-close{position:absolute;top:12px;right:12px;padding:8px 12px;background:var(--accent);color:#0b0c10;border:none;border-radius:6px;cursor:pointer;font-weight:700;}
+.watermark{position:fixed;bottom:8px;right:8px;font-size:12px;color:rgba(255,255,255,0.3);font-family:'Rajdhani';z-index:50;}
 </style>
 </head>
 <body>
@@ -60,10 +61,13 @@ SinisterShot
 <button class="lb-close" id="closeLb">Close</button>
 </div>
 </div>
+<div class="watermark">Made by ShellJelly</div>
 <script>
 let items=[
-{type:'image',title:'Diddy ahh',url:'https://files.catbox.moe/gorfql.webp'},
-{type:'video',title:'Nazi',url:'https://files.catbox.moe/wzon4r.mp4'},
+{type:'image',title:'Sample Image',url:'https://files.catbox.moe/gorfql.webp'},
+{type:'video',title:'Sample Video',url:'https://files.catbox.moe/wzon4r.mp4'},
+{type:'video',title:'Meme Video',url:'https://files.catbox.moe/nnuzm2.mp4'},
+{type:'image',title:'Another Image',url:'https://files.catbox.moe/gorfql.webp'},
 ]
 
 const gallery=document.getElementById('gallery');
@@ -72,12 +76,14 @@ const lightbox=document.getElementById('lightbox');
 const lbVideo=document.getElementById('lbVideo');
 const lbAudio=document.getElementById('lbAudio');
 const closeLb=document.getElementById('closeLb');
+
 function renderGallery(){
 let q=searchInput.value.trim().toLowerCase();
 gallery.innerHTML='';
 let results=items.filter(i=>i.title.toLowerCase().includes(q));
 results.forEach(item=>{
-let c=document.createElement('div'); c.className='card';
+let c=document.createElement('div'); 
+c.className='card';
 if(item.type==='image') c.innerHTML=`<img src="${item.url}" alt="${item.title}"/><div class="meta">${item.title}</div>`;
 else c.innerHTML=`<video src="${item.url}" preload="metadata"></video><div class="meta">${item.title}</div>`;
 c.onclick=()=>openLightbox(item);
@@ -85,6 +91,7 @@ gallery.appendChild(c);
 });
 if(gallery.children.length===0) gallery.innerHTML='<div style="padding:40px;color:var(--muted)">No items found.</div>';
 }
+
 function openLightbox(item){
 lbVideo.style.display='none'; lbAudio.style.display='none'; lbVideo.pause(); lbAudio.pause();
 if(item.type==='image'){
@@ -104,10 +111,10 @@ lbAudio.autoplay=true;
 }
 lightbox.classList.add('show');
 }
+
 closeLb.onclick=()=>{lightbox.classList.remove('show'); lbVideo.pause(); lbAudio.pause();};
 searchInput.addEventListener('input',()=>renderGallery());
 renderGallery();
 </script>
 </body>
 </html>
-
