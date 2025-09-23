@@ -33,7 +33,7 @@ main{padding:20px;}
 .lb{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:40;}
 .lb.show{display:flex}
 .lb-inner{width:100%;height:100%;background:var(--panel);border-radius:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
-.lb-inner video, .lb-inner audio{width:100%;height:100%;object-fit:contain;}
+.lb-inner video, .lb-inner audio, .lb-inner img{width:100%;height:100%;object-fit:contain;}
 .lb-close{position:absolute;top:12px;right:12px;padding:8px 12px;background:var(--accent);color:#0b0c10;border:none;border-radius:6px;cursor:pointer;font-weight:700;}
 .watermark{position:fixed;bottom:8px;right:8px;font-size:12px;color:rgba(255,255,255,0.3);font-family:'Rajdhani';z-index:50;}
 </style>
@@ -58,15 +58,16 @@ SinisterShot
 <div class="lb-inner">
 <video id="lbVideo" controls></video>
 <audio id="lbAudio" controls></audio>
+<img id="lbImage"/>
 <button class="lb-close" id="closeLb">Close</button>
 </div>
 </div>
 <div class="watermark">Made by ShellJelly</div>
 <script>
 let items=[
-{type:'image',title:'Sample Image',url:'https://files.catbox.moe/gorfql.webp'},
-{type:'video',title:'Sample Video',url:'https://files.catbox.moe/wzon4r.mp4'},
-{type:'video',title:'Meme Video',url:'https://files.catbox.moe/nnuzm2.mp4'},
+{type:'image',title:'Cool Catgirl',url:'https://files.catbox.moe/gorfql.webp'},
+{type:'video',title:'Funny Meme',url:'https://files.catbox.moe/wzon4r.mp4'},
+{type:'video',title:'Random Video',url:'https://files.catbox.moe/nnuzm2.mp4'},
 {type:'image',title:'Another Image',url:'https://files.catbox.moe/gorfql.webp'},
 ]
 
@@ -75,6 +76,7 @@ const searchInput=document.getElementById('search');
 const lightbox=document.getElementById('lightbox');
 const lbVideo=document.getElementById('lbVideo');
 const lbAudio=document.getElementById('lbAudio');
+const lbImage=document.getElementById('lbImage');
 const closeLb=document.getElementById('closeLb');
 
 function renderGallery(){
@@ -93,11 +95,11 @@ if(gallery.children.length===0) gallery.innerHTML='<div style="padding:40px;colo
 }
 
 function openLightbox(item){
-lbVideo.style.display='none'; lbAudio.style.display='none'; lbVideo.pause(); lbAudio.pause();
+lbVideo.style.display='none'; lbAudio.style.display='none'; lbImage.style.display='none';
+lbVideo.pause(); lbAudio.pause();
 if(item.type==='image'){
-lbVideo.style.display='block';
-lbVideo.src=item.url;
-lbVideo.controls=false;
+lbImage.style.display='block';
+lbImage.src=item.url;
 }else if(item.type==='video'){
 lbVideo.style.display='block';
 lbVideo.src=item.url;
