@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SinisterShot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#0b0c10;
+--panel:#121417;
+--accent:#ff6ec7;
+--muted:#9aa8b2;
+--glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Rajdhani', 'Orbitron', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#e6f0f6;background:var(--bg);}
+header{padding:20px 28px;display:flex;align-items:center;gap:18px;background:var(--panel);position:sticky;top:0;z-index:30;border-bottom:1px solid rgba(255,255,255,0.05);}
+#logo{font-family:'Orbitron';font-weight:700;font-size:24px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+#logo svg{width:24px;height:24px;vertical-align:middle;fill:var(--accent);}
+.controls{margin-left:auto;display:flex;gap:12px;align-items:center}
+.search-wrap{display:flex;align-items:center;background:var(--glass);border-radius:14px;padding:8px 10px;border:1px solid rgba(255,255,255,0.06)}
+.search{background:transparent;border:0;outline:0;padding:8px 10px;border-radius:10px;color:inherit;width:300px;font-size:14px}
+.search::placeholder{color:rgba(230,240,246,0.5)}
+main{padding:20px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.card{position:relative;border-radius:14px;overflow:hidden;background:var(--panel);border:1px solid rgba(255,255,255,0.03);transform:translateZ(0);transition:transform .25s ease, box-shadow .25s ease;cursor:pointer;}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.5)}
+.card img, .card video{width:100%;height:220px;object-fit:cover;display:block}
+.meta{padding:8px;color:#e6f0f6;font-weight:700;text-align:center}
+.lb{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:40;}
+.lb.show{display:flex}
+.lb-inner{width:90%;max-width:1200px;height:90%;background:var(--panel);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.lb-inner video, .lb-inner audio{width:100%;height:100%;object-fit:contain;}
+.lb-close{position:absolute;top:12px;right:12px;padding:8px 12px;background:var(--accent);color:#0b0c10;border:none;border-radius:6px;cursor:pointer;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+<div id="logo" onclick="location.reload()">
+<svg viewBox="0 0 24 24"><path d="M12 2L15 8H9L12 2Z"/><path d="M12 22L15 16H9L12 22Z"/><path d="M2 12L8 15V9L2 12Z"/><path d="M22 12L16 15V9L22 12Z"/></svg>
+SinisterShot
+</div>
+<div class="controls">
+<div class="search-wrap">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:0.8;margin-left:6px"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11.5" cy="11.5" r="5.5" stroke="currentColor" stroke-width="1.4"></circle></svg>
+<input id="search" class="search" placeholder="Search by name..." autocomplete="off"/>
+</div>
+</div>
+</header>
+<main>
+<section class="grid" id="gallery"></section>
+</main>
+<div class="lb" id="lightbox">
+<div class="lb-inner">
+<video id="lbVideo" controls></video>
+<audio id="lbAudio" controls></audio>
+<button class="lb-close" id="closeLb">Close</button>
+</div>
+</div>
+<script>
+let items=[
+{type:'image',title:'Diddy ahh',url:'https://files.catbox.moe/gorfql.webp'},
+{type:'video',title:'Nazi',url:'https://files.catbox.moe/wzon4r.mp4'},
+]
+
+const gallery=document.getElementById('gallery');
+const searchInput=document.getElementById('search');
+const lightbox=document.getElementById('lightbox');
+const lbVideo=document.getElementById('lbVideo');
+const lbAudio=document.getElementById('lbAudio');
+const closeLb=document.getElementById('closeLb');
+function renderGallery(){
+let q=searchInput.value.trim().toLowerCase();
+gallery.innerHTML='';
+let results=items.filter(i=>i.title.toLowerCase().includes(q));
+results.forEach(item=>{
+let c=document.createElement('div'); c.className='card';
+if(item.type==='image') c.innerHTML=`<img src="${item.url}" alt="${item.title}"/><div class="meta">${item.title}</div>`;
+else c.innerHTML=`<video src="${item.url}" preload="metadata"></video><div class="meta">${item.title}</div>`;
+c.onclick=()=>openLightbox(item);
+gallery.appendChild(c);
+});
+if(gallery.children.length===0) gallery.innerHTML='<div style="padding:40px;color:var(--muted)">No items found.</div>';
+}
+function openLightbox(item){
+lbVideo.style.display='none'; lbAudio.style.display='none'; lbVideo.pause(); lbAudio.pause();
+if(item.type==='image'){
+lbVideo.style.display='block';
+lbVideo.src=item.url;
+lbVideo.controls=false;
+}else if(item.type==='video'){
+lbVideo.style.display='block';
+lbVideo.src=item.url;
+lbVideo.controls=true;
+lbVideo.autoplay=true;
+}else if(item.type==='audio'){
+lbAudio.style.display='block';
+lbAudio.src=item.url;
+lbAudio.controls=true;
+lbAudio.autoplay=true;
+}
+lightbox.classList.add('show');
+}
+closeLb.onclick=()=>{lightbox.classList.remove('show'); lbVideo.pause(); lbAudio.pause();};
+searchInput.addEventListener('input',()=>renderGallery());
+renderGallery();
+</script>
+</body>
+</html>
+
