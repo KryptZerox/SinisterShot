@@ -65,6 +65,8 @@ SinisterShot
 <div class="watermark">Made by ShellJelly</div>
 <script>
 let items=[
+  {type:'image',title:':3',url:'https://files.catbox.moe/gorfql.webp'},
+  {type:'video',title:'Nazi',url:'https://files.catbox.moe/wzon4r.mp4'},
   {type:'video',title:'Step Sister Cheats With Step Brother Hentai Married Couple',url:'https://www.hentaigem.com/videos/84997/step-sis-cheats-with-step-brother-hentai-married-couple/'},
   {type:'video',title:'Step Sis Wife Cheats With Step Brother Hentai',url:'https://www.tnaflix.com/hentai-porn/Step-Sis-Wife-Cheats-With-Step-Brother-Hentai/video9671615'},
 ]
@@ -77,39 +79,55 @@ const lbAudio=document.getElementById('lbAudio');
 const lbImage=document.getElementById('lbImage');
 const closeLb=document.getElementById('closeLb');
 
+function isDirectVideo(url){
+  return url.match(/\.(mp4|webm|ogg)$/i);
+}
+
 function renderGallery(){
-let q=searchInput.value.trim().toLowerCase();
-gallery.innerHTML='';
-let results=items.filter(i=>i.title.toLowerCase().includes(q));
-results.forEach(item=>{
-let c=document.createElement('div'); 
-c.className='card';
-if(item.type==='image') c.innerHTML=`<img src="${item.url}" alt="${item.title}"/><div class="meta">${item.title}</div>`;
-else c.innerHTML=`<video src="${item.url}" preload="metadata"></video><div class="meta">${item.title}</div>`;
-c.onclick=()=>openLightbox(item);
-gallery.appendChild(c);
-});
-if(gallery.children.length===0) gallery.innerHTML='<div style="padding:40px;color:var(--muted)">No items found.</div>';
+  let q=searchInput.value.trim().toLowerCase();
+  gallery.innerHTML='';
+  let results=items.filter(i=>i.title.toLowerCase().includes(q));
+  results.forEach(item=>{
+    let c=document.createElement('div'); 
+    c.className='card';
+    if(item.type==='image'){
+      c.innerHTML=`<img src="${item.url}" alt="${item.title}"/><div class="meta">${item.title}</div>`;
+      c.onclick=()=>openLightbox(item);
+    } 
+    else if(item.type==='video' && isDirectVideo(item.url)){
+      c.innerHTML=`<video src="${item.url}" preload="metadata"></video><div class="meta">${item.title}</div>`;
+      c.onclick=()=>openLightbox(item);
+    } 
+    else if(item.type==='video'){
+      c.innerHTML=`<div style="width:100%;height:220px;display:flex;align-items:center;justify-content:center;background:var(--glass);">
+                     <span style="color:var(--muted);font-size:14px;">🔗 Open Video</span>
+                   </div>
+                   <div class="meta">${item.title}</div>`;
+      c.onclick=()=>window.open(item.url,'_blank');
+    }
+    gallery.appendChild(c);
+  });
+  if(gallery.children.length===0) gallery.innerHTML='<div style="padding:40px;color:var(--muted)">No items found.</div>';
 }
 
 function openLightbox(item){
-lbVideo.style.display='none'; lbAudio.style.display='none'; lbImage.style.display='none';
-lbVideo.pause(); lbAudio.pause();
-if(item.type==='image'){
-lbImage.style.display='block';
-lbImage.src=item.url;
-}else if(item.type==='video'){
-lbVideo.style.display='block';
-lbVideo.src=item.url;
-lbVideo.controls=true;
-lbVideo.autoplay=true;
-}else if(item.type==='audio'){
-lbAudio.style.display='block';
-lbAudio.src=item.url;
-lbAudio.controls=true;
-lbAudio.autoplay=true;
-}
-lightbox.classList.add('show');
+  lbVideo.style.display='none'; lbAudio.style.display='none'; lbImage.style.display='none';
+  lbVideo.pause(); lbAudio.pause();
+  if(item.type==='image'){
+    lbImage.style.display='block';
+    lbImage.src=item.url;
+  }else if(item.type==='video' && isDirectVideo(item.url)){
+    lbVideo.style.display='block';
+    lbVideo.src=item.url;
+    lbVideo.controls=true;
+    lbVideo.autoplay=true;
+  }else if(item.type==='audio'){
+    lbAudio.style.display='block';
+    lbAudio.src=item.url;
+    lbAudio.controls=true;
+    lbAudio.autoplay=true;
+  }
+  lightbox.classList.add('show');
 }
 
 closeLb.onclick=()=>{lightbox.classList.remove('show'); lbVideo.pause(); lbAudio.pause();};
